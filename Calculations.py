@@ -111,6 +111,9 @@ def get_classifier_fault(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k):
     mist_prob1 = get_prior_class_prob(errors1, n)
     mist_prob2 = get_prior_class_prob(errors2, n)
     mist_prob = mist_prob1 + mist_prob2
+    return {'n1': n1, 'n2': n2, 'p1': p1_eval, 'p2': p2_eval, 'm11': m11_eval, 'm12': m12_eval, 'm21': m21_eval,
+            'm22': m22_eval, 'd11': d11_eval, 'd12': d12_eval, 'd21': d21_eval, 'd22': d22_eval,
+            'mist_prob1': mist_prob1, 'mist_prob2': mist_prob2, 'mist_prob': mist_prob}
 
 
 get_classifier_fault(1000, 4, 5, 5, 6, 10, 12, 15, 17, 0.5, 0.5, 1000)

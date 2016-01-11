@@ -16,7 +16,9 @@ class MainWindow(MainWindowSlots):
 
     # Подключаем слоты к виджетам
     def connect_slots(self):
-        self.pushButton.clicked.connect(self.set_time)
+        self.pushButton.clicked.connect(self.calc)
+        self.graph_pmist_n_btn.clicked.connect(self.graph_mistake_prob_n)
+        self.graph_pmist_prior_btn.clicked.connect(self.graph_mistake_prob_p)
         return None
 
 
