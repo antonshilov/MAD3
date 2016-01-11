@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import graph
-from Calculations import get_classifier_fault
+from сalculations import get_classifier_fault
 from testui import Ui_Form
 
 

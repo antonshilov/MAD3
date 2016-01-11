@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-import Calculations as calc
+import сalculations as calc
 
 
 def mistake_prob_n(d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k):
