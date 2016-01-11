@@ -19,6 +19,8 @@ class MainWindow(MainWindowSlots):
         self.pushButton.clicked.connect(self.calc)
         self.graph_pmist_n_btn.clicked.connect(self.graph_mistake_prob_n)
         self.graph_pmist_prior_btn.clicked.connect(self.graph_mistake_prob_p)
+        self.graph_pmist_m_btn.clicked.connect(self.graph_mistake_prob_m)
+        self.graph_pmist_d_btn.clicked.connect(self.graph_mistake_prob_d)
         return None
 
 
