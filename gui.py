@@ -55,7 +55,7 @@ class MainWindowSlots(Ui_Form):
         m22 = float(self.m22.text())
         p1 = float(self.p1.text())
         p2 = 1 - p1
-        k = float(self.k.text())
+        k = int(self.k.text())
         graph.mistake_prob_n(d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k)
         return None
 
@@ -69,7 +69,7 @@ class MainWindowSlots(Ui_Form):
         m12 = float(self.m12.text())
         m21 = float(self.m21.text())
         m22 = float(self.m22.text())
-        k = float(self.k.text())
+        k = int(self.k.text())
         graph.mistake_prob_p(n, d11, d12, d21, d22, m11, m12, m21, m22, k)
         return None
 
@@ -85,7 +85,7 @@ class MainWindowSlots(Ui_Form):
         m22 = float(self.m22.text())
         p1 = float(self.p1.text())
         p2 = 1 - p1
-        k = float(self.k.text())
+        k = int(self.k.text())
         graph.mistake_prob_m(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k)
         return None
 
@@ -101,6 +101,6 @@ class MainWindowSlots(Ui_Form):
         m22 = float(self.m22.text())
         p1 = float(self.p1.text())
         p2 = 1 - p1
-        k = float(self.k.text())
+        k = int(self.k.text())
         graph.mistake_prob_d(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k)
         return None
