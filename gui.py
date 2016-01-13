@@ -18,7 +18,7 @@ class MainWindowSlots(Ui_Form):
         m22 = float(self.m22.text())
         p1 = float(self.p1.text())
         p2 = 1 - p1
-        k = float(self.k.text())
+        k = int(self.k.text())
         res = get_classifier_fault(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k)
         self.m11_ev.setText(str(res['m11']))
         self.m12_ev.setText(str(res['m12']))

@@ -26,6 +26,18 @@ def generate_mpc(m1, d1, m2, d2, n):
     return result
 
 
+def generate_clt(m, d, n, k):
+    result = []
+    for i in range(n):
+        value = 0.
+        for j in range(k):
+            value += random() - 0.5
+        value *= sqrt(d) * sqrt(12 / k)
+        value += m
+        result.append(value)
+    return result
+
+
 # Оценка матожидания
 def get_exp_val_eval(rand_val):
     return sum(rand_val) / len(rand_val)
@@ -87,8 +99,12 @@ def get_classifier_fault(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k):
     n1, n2 = generate_amount(p1, n)
 
     # Генерируем выборки МПК
-    class1 = generate_mpc(m11, d11, m12, d12, n1)
-    class2 = generate_mpc(m21, d21, m22, d22, n2)
+    if k >= 12:
+        class1 = [generate_clt(m11, d11, n1, k), generate_clt(m12, d12, n1, k)]
+        class2 = [generate_clt(m21, d21, n2, k), generate_clt(m22, d22, n2, k)]
+    else:
+        class1 = generate_mpc(m11, d11, m12, d12, n1)
+        class2 = generate_mpc(m21, d21, m22, d22, n2)
 
     # Оценка априорной вероятности
     p1_eval = get_prior_class_prob(n1, n)
@@ -115,5 +131,4 @@ def get_classifier_fault(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k):
             'm22': m22_eval, 'd11': d11_eval, 'd12': d12_eval, 'd21': d21_eval, 'd22': d22_eval,
             'mist_prob1': mist_prob1, 'mist_prob2': mist_prob2, 'mist_prob': mist_prob}
 
-
-get_classifier_fault(1000, 4, 5, 5, 6, 10, 12, 15, 17, 0.5, 0.5, 1000)
+# get_classifier_fault(1000, 4, 5, 5, 6, 10, 12, 15, 17, 0.5, 0.5, 1000)
