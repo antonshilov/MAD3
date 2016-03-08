@@ -3,6 +3,8 @@ from math import sqrt, log, exp, pi
 from random import random, uniform
 
 pp = pprint.PrettyPrinter(indent=4)
+# http://www.machinelearning.ru/wiki/index.php?title=%D0%AF%D0%B4%D0%B5%D1%80%D0%BD%D0%BE%D0%B5_%D1%81%D0%B3%D0%BB%D0%B0%D0%B6%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5
+core_types = {'rect': 0, 'tri': 1, 'epan': 2, 'gauss': 3, 'quad': 4}
 
 
 def generate_mpc(m1, d1, m2, d2, n):
@@ -11,8 +13,6 @@ def generate_mpc(m1, d1, m2, d2, n):
     result = [[], []]
     for i in range(n):
         while not 0 < s < 1:
-            # u1 = uniform(-1, 1)
-            # u2 = uniform(-1, 1)
             v1 = 2 * uniform(-1, 1) - 1
             v2 = 2 * uniform(-1, 1) - 1
             s = v1 ** 2 + v2 ** 2
@@ -70,65 +70,80 @@ def generate_amount(p, n):
 
 
 # Вычисляем плотность вероятности
-def get_prob_density(x1, x2, d1, d2, m1, m2):
-    return exp(
-            -0.5 * ((x1 - m1) / sqrt(d1)) ** 2 -
-            0.5 * ((x2 - m2) / sqrt(d2)) ** 2) \
-           / (2 * pi * sqrt(d1 * d2))
+def calc_core(core_type, x):
+    if core_type == core_types['rect']:
+        return 0.5
+    elif core_type == core_types['tri']:
+        return 1 - x
+    elif core_type == core_types['epan']:
+        return 0.75 * (1 - x ** 2)
+    elif core_type == core_types['gauss']:
+        return ((2 * pi) ** (-0.5)) * exp(-(x ** 2) / 2)
+    elif core_type == core_types['quad']:
+        return (15 / 16) * (1 - x ** 2)
+    pass
 
 
-def classify(class1, class2, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2):
+def get_prob_density(sample, val, h, core_type):
+    res = 0
+    for el in sample:
+        x = (val - el) / h
+        res += (1 / h) * calc_core(core_type, x)
+    return res / len(sample)
+
+
+def classify(class1, class2, core_type, c, q):
     errors1 = errors2 = 0
-    for i in range(len(class1[0])):
-        density1 = get_prob_density(class1[0][i], class1[1][i], d11, d12, m11, m12)
-        density2 = get_prob_density(class1[0][i], class1[1][i], d21, d22, m21, m22)
-        result = density1 * p1 - density2 * p2
+    sample_len = len(class1) + len(class2)
+    p1_eval = get_prior_class_prob(len(class1), sample_len)
+    p2_eval = get_prior_class_prob(len(class2), sample_len)
+    h = c * sample_len ** (-q)
+
+    for el in class1:
+        density1 = get_prob_density(class1, el, h, core_type)
+        density2 = get_prob_density(class2, el, h, core_type)
+        result = density1 * p1_eval - density2 * p2_eval
         if result < 0:
             errors1 += 1
-    for i in range(len(class2[0])):
-        density1 = get_prob_density(class2[0][i], class2[1][i], d11, d12, m11, m12)
-        density2 = get_prob_density(class2[0][i], class2[1][i], d21, d22, m21, m22)
-        result = density1 * p1 - density2 * p2
+    for el in class2:
+        density1 = get_prob_density(class1, el, h, core_type)
+        density2 = get_prob_density(class2, el, h, core_type)
+        result = density1 * p1_eval - density2 * p2_eval
         if result > 0:
             errors2 += 1
     return errors1, errors2
 
 
-def get_classifier_fault(n, d11, d12, d21, d22, m11, m12, m21, m22, p1, p2, k):
+def get_classifier_fault(n, d11, d21, m11, m21, p1, k, c, q, core_type):
     # Размеры выборок для классов
     n1, n2 = generate_amount(p1, n)
 
     # Генерируем выборки МПК
-    if k >= 12:
-        class1 = [generate_clt(m11, d11, n1, k), generate_clt(m12, d12, n1, k)]
-        class2 = [generate_clt(m21, d21, n2, k), generate_clt(m22, d22, n2, k)]
-    else:
-        class1 = generate_mpc(m11, d11, m12, d12, n1)
-        class2 = generate_mpc(m21, d21, m22, d22, n2)
+    # if k >= 12:
+    class1 = generate_clt(m11, d11, n1, k)
+    class2 = generate_clt(m21, d21, n2, k)
+    # else:
+    #     class1 = generate_mpc(m11, d11, m12, d12, n1)
+    #     class2 = generate_mpc(m21, d21, m22, d22, n2)
 
     # Оценка априорной вероятности
     p1_eval = get_prior_class_prob(n1, n)
     p2_eval = get_prior_class_prob(n2, n)
 
     # Оценка матожидания
-    m11_eval = get_exp_val_eval(class1[0])
-    m12_eval = get_exp_val_eval(class1[1])
-    m21_eval = get_exp_val_eval(class2[0])
-    m22_eval = get_exp_val_eval(class2[1])
+    m1_eval = get_exp_val_eval(class1)
+    m2_eval = get_exp_val_eval(class2)
 
     # Оценка дисперсии
-    d11_eval = get_disp_eval(class1[0], m11_eval)
-    d12_eval = get_disp_eval(class1[1], m12_eval)
-    d21_eval = get_disp_eval(class2[0], m21_eval)
-    d22_eval = get_disp_eval(class2[1], m22_eval)
+    d1_eval = get_disp_eval(class1, m1_eval)
+    d2_eval = get_disp_eval(class2, m2_eval)
 
-    errors1, errors2 = classify(class1, class2, d11_eval, d12_eval, d21_eval, d22_eval, m11_eval, m12_eval, m21_eval,
-                                m22_eval, p1_eval, p2_eval)
+    errors1, errors2 = classify(class1, class2, core_type, c, q)
     mist_prob1 = get_prior_class_prob(errors1, n)
     mist_prob2 = get_prior_class_prob(errors2, n)
     mist_prob = mist_prob1 + mist_prob2
-    return {'n1': n1, 'n2': n2, 'p1': p1_eval, 'p2': p2_eval, 'm11': m11_eval, 'm12': m12_eval, 'm21': m21_eval,
-            'm22': m22_eval, 'd11': d11_eval, 'd12': d12_eval, 'd21': d21_eval, 'd22': d22_eval,
+    return {'n1': n1, 'n2': n2, 'p1': p1_eval, 'p2': p2_eval, 'm11': m1_eval, 'm21': m2_eval,
+            'd11': d1_eval, 'd21': d2_eval,
             'mist_prob1': mist_prob1, 'mist_prob2': mist_prob2, 'mist_prob': mist_prob}
 
 # get_classifier_fault(1000, 4, 5, 5, 6, 10, 12, 15, 17, 0.5, 0.5, 1000)
