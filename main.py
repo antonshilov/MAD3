@@ -17,10 +17,10 @@ class MainWindow(MainWindowSlots):
     # Подключаем слоты к виджетам
     def connect_slots(self):
         self.pushButton.clicked.connect(self.calc)
-        # self.graph_pmist_n_btn.clicked.connect(self.graph_mistake_prob_n)
-        # self.graph_pmist_prior_btn.clicked.connect(self.graph_mistake_prob_p)
-        # self.graph_pmist_m_btn.clicked.connect(self.graph_mistake_prob_h)
-        # self.graph_pmist_d_btn.clicked.connect(self.graph_prop_density_core)
+        self.graph_pmist_n_btn.clicked.connect(self.graph_mistake_prob_n)
+        self.graph_pmist_prior_btn.clicked.connect(self.graph_mistake_prob_p)
+        self.graph_pmist_m_btn.clicked.connect(self.graph_mistake_prob_h)
+        self.graph_pmist_d_btn.clicked.connect(self.graph_prob_density_core)
         return None
 
 

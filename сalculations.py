@@ -180,6 +180,7 @@ def get_opt_h(n, d11, d21, m11, m21, p1, k, core_type):
     b = 1
     l = b - a
     m = (a + b) / 2
+    res = tuple()
     res_m = 0
     while l > 0.001:
         h1 = a + l / 4
@@ -188,8 +189,8 @@ def get_opt_h(n, d11, d21, m11, m21, p1, k, core_type):
         res1 = sum(res1)
         res2 = classify(class1, class2, core_type, h2, 0)
         res2 = sum(res2)
-        res_m = classify(class1, class2, core_type, m, 0)
-        res_m = sum(res_m)
+        res = classify(class1, class2, core_type, m, 0)
+        res_m = sum(res)
         if res1 < res_m:
             b = m
             m = h1
@@ -200,8 +201,12 @@ def get_opt_h(n, d11, d21, m11, m21, p1, k, core_type):
             a = h1
             b = h2
         l = b - a
-    print(m)
-    print(res_m)
+    mist_prob1 = get_prior_class_prob(res[0], n)
+    mist_prob2 = get_prior_class_prob(res[1], n)
+    mist_prob = mist_prob1 + mist_prob2
+    return {'n1': n1, 'n2': n2, 'p1': p1_eval, 'p2': p2_eval, 'm11': m1_eval, 'm21': m2_eval,
+            'd11': d1_eval, 'd21': d2_eval,
+            'mist_prob1': mist_prob1, 'mist_prob2': mist_prob2, 'mist_prob': mist_prob, 'h': m}
 
 
 def normal_distribution_prob_density(x, m, d):
@@ -209,5 +214,4 @@ def normal_distribution_prob_density(x, m, d):
     res = exp(res) / (sqrt(d * 2 * pi))
     return res
 
-
-get_opt_h(100, 2, 2, 10, 12, 0.4, 12, 3)
+# get_opt_h(100, 2, 2, 10, 12, 0.4, 12, 3)

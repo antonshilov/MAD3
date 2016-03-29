@@ -53,7 +53,7 @@ def mistake_prob_h(n, d11, d21, m11, m21, p1, k, core_type):
     plt.show()
 
 
-def prop_density_core(n, d11, d21, m11, m21, p1, k, c, q):
+def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q):
     interactive(False)
     n1, n2 = calc.generate_amount(p1, n)
     class1 = calc.generate_clt(m11, d11, n1, k)
