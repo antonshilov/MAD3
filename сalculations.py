@@ -71,17 +71,24 @@ def generate_amount(p, n):
 
 # Вычисляем плотность вероятности
 def calc_core(core_type, x):
+    result = 0.
+    val = abs(x)
     if core_type == core_types['rect']:
-        return 0.5
+        if val <= 1:
+            return 0.5
     elif core_type == core_types['tri']:
-        return 1 - x
+        if val <= 1:
+            return 1 - x
     elif core_type == core_types['epan']:
-        return 0.75 * (1 - x ** 2)
+        if val <= 1:
+            return 0.75 * (1 - x ** 2)
     elif core_type == core_types['gauss']:
-        return ((2 * pi) ** (-0.5)) * exp(-(x ** 2) / 2)
+        if val <= 1:
+            return ((2 * pi) ** (-0.5)) * exp(-(x ** 2) / 2)
     elif core_type == core_types['quad']:
-        return (15 / 16) * (1 - x ** 2)
-    pass
+        if val <= 1:
+            return (15 / 16) * (1 - x ** 2)
+    return result
 
 
 def get_prob_density(sample, val, h, core_type):
@@ -97,7 +104,7 @@ def classify(class1, class2, core_type, c, q):
     sample_len = len(class1) + len(class2)
     p1_eval = get_prior_class_prob(len(class1), sample_len)
     p2_eval = get_prior_class_prob(len(class2), sample_len)
-    h = c * sample_len ** (-q)
+    h = c * (sample_len ** (-q))
 
     for el in class1:
         density1 = get_prob_density(class1, el, h, core_type)
@@ -146,4 +153,61 @@ def get_classifier_fault(n, d11, d21, m11, m21, p1, k, c, q, core_type):
             'd11': d1_eval, 'd21': d2_eval,
             'mist_prob1': mist_prob1, 'mist_prob2': mist_prob2, 'mist_prob': mist_prob}
 
-# get_classifier_fault(1000, 4, 5, 5, 6, 10, 12, 15, 17, 0.5, 0.5, 1000)
+
+def get_opt_h(n, d11, d21, m11, m21, p1, k, core_type):
+    n1, n2 = generate_amount(p1, n)
+
+    # Генерируем выборки МПК
+    # if k >= 12:
+    class1 = generate_clt(m11, d11, n1, k)
+    class2 = generate_clt(m21, d21, n2, k)
+    # else:
+    #     class1 = generate_mpc(m11, d11, m12, d12, n1)
+    #     class2 = generate_mpc(m21, d21, m22, d22, n2)
+
+    # Оценка априорной вероятности
+    p1_eval = get_prior_class_prob(n1, n)
+    p2_eval = get_prior_class_prob(n2, n)
+
+    # Оценка матожидания
+    m1_eval = get_exp_val_eval(class1)
+    m2_eval = get_exp_val_eval(class2)
+
+    # Оценка дисперсии
+    d1_eval = get_disp_eval(class1, m1_eval)
+    d2_eval = get_disp_eval(class2, m2_eval)
+    a = 0
+    b = 1
+    l = b - a
+    m = (a + b) / 2
+    res_m = 0
+    while l > 0.001:
+        h1 = a + l / 4
+        h2 = b - l / 4
+        res1 = classify(class1, class2, core_type, h1, 0)
+        res1 = sum(res1)
+        res2 = classify(class1, class2, core_type, h2, 0)
+        res2 = sum(res2)
+        res_m = classify(class1, class2, core_type, m, 0)
+        res_m = sum(res_m)
+        if res1 < res_m:
+            b = m
+            m = h1
+        elif res_m > res2:
+            a = m
+            m = h2
+        else:
+            a = h1
+            b = h2
+        l = b - a
+    print(m)
+    print(res_m)
+
+
+def normal_distribution_prob_density(x, m, d):
+    res = -((x - m) ** 2 / (2 * d))
+    res = exp(res) / (sqrt(d * 2 * pi))
+    return res
+
+
+get_opt_h(100, 2, 2, 10, 12, 0.4, 12, 3)

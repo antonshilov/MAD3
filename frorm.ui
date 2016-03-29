@@ -67,7 +67,7 @@
     <item row="4" column="2" colspan="2">
      <widget class="QLineEdit" name="n">
       <property name="text">
-       <string>1000</string>
+       <string>100</string>
       </property>
      </widget>
     </item>
@@ -165,14 +165,14 @@
     <item>
      <widget class="QPushButton" name="graph_pmist_m_btn">
       <property name="text">
-       <string>Pош/M</string>
+       <string>Pош/h</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="graph_pmist_d_btn">
       <property name="text">
-       <string>Pош/D</string>
+       <string>Pош/Ядро</string>
       </property>
      </widget>
     </item>
@@ -439,7 +439,7 @@
     <rect>
      <x>10</x>
      <y>260</y>
-     <width>84</width>
+     <width>101</width>
      <height>85</height>
     </rect>
    </property>
@@ -473,7 +473,14 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="h">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_14">
       <property name="text">
        <string>h</string>
       </property>
@@ -484,9 +491,9 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>110</x>
      <y>290</y>
-     <width>141</width>
+     <width>142</width>
      <height>71</height>
     </rect>
    </property>
@@ -528,6 +535,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="is_h_opt">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>230</y>
+     <width>97</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Подбор h</string>
+   </property>
   </widget>
  </widget>
  <resources/>
