@@ -1,4 +1,4 @@
-# Data Analysis Methods Lab1
+# Data Analysis Methods Lab3
 To run this application you need to install:
 * python3
 * matplotlib
