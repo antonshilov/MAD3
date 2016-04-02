@@ -82,5 +82,6 @@ class MainWindowSlots(Ui_Form):
         k = int(self.k.text())
         c = float(self.c.text())
         q = float(self.q.text())
-        graph.prob_density_core(n, d11, d21, m11, m21, p1, k, c, q)
+        core_type = self.core_type.currentIndex()
+        graph.prob_density_core(n, d11, d21, m11, m21, p1, k, c, q, core_type)
         return None

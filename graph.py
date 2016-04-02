@@ -53,7 +53,7 @@ def mistake_prob_h(n, d11, d21, m11, m21, p1, k, core_type):
     plt.show()
 
 
-def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q):
+def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q, core_type):
     interactive(False)
     n1, n2 = calc.generate_amount(p1, n)
     class1 = calc.generate_clt(m11, d11, n1, k)
@@ -62,21 +62,20 @@ def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q):
     class2.sort()
     h = c * (n ** (-q))
     # Ядра
-    for core_type in calc.core_types.values():
-        data = []
-        for el in class1:
-            res = 0
-            for i in range(10):
-                res += calc.get_prob_density(class1, el, h, core_type)
-            data.append((el, res / 10))
-        for el in class2:
-            res = 0
-            for i in range(10):
-                res += calc.get_prob_density(class2, el, h, core_type)
-            data.append((el, res / 10))
+    data = []
+    for el in class1:
+        res = 0
+        for i in range(10):
+            res += calc.get_prob_density(class1, el, h, core_type)
+        data.append((el, res / 10))
+    for el in class2:
+        res = 0
+        for i in range(10):
+            res += calc.get_prob_density(class2, el, h, core_type)
+        data.append((el, res / 10))
 
-        # data = sorted(data, key=lambda el: el[0])
-        plt.plot(*zip(*data))
+    # data = sorted(data, key=lambda el: el[0])
+    plt.plot(*zip(*data))
 
     data = []
     for el in class1:
@@ -91,7 +90,7 @@ def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q):
 
     plt.xlabel('X')
     plt.ylabel('f(x|1)')
-    plt.legend(['rect', 'tri', 'epan', 'gauss', 'quad', 'normal dist'], loc='upper left')
+    plt.legend(['selected core', 'normal dist'], loc='upper left')
     plt.show()
 
 #
