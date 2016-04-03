@@ -60,27 +60,32 @@ def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q, core_type):
     class2 = calc.generate_clt(m21, d21, n2, k)
     class1.sort()
     class2.sort()
+    repeats_number = 30
     h = c * (n ** (-q))
     # Ядра
     data = []
     for el in class1:
         res = 0
-        for i in range(10):
+        for i in range(repeats_number):
             res += calc.get_prob_density(class1, el, h, core_type)
-        data.append((el, res / 10))
+        data.append((el, res / repeats_number))
+    plt.plot(*zip(*data))  # linestyle = '-.'
+    data.clear()
     for el in class2:
         res = 0
-        for i in range(10):
+        for i in range(repeats_number):
             res += calc.get_prob_density(class2, el, h, core_type)
-        data.append((el, res / 10))
-
-    # data = sorted(data, key=lambda el: el[0])
+        data.append((el, res / repeats_number))
     plt.plot(*zip(*data))
 
-    data = []
+    # True values
+    data.clear()
     for el in class1:
         res = calc.normal_distribution_prob_density(el, m11, d11)
         data.append((el, res))
+    plt.plot(*zip(*data))
+
+    data.clear()
     for el in class2:
         res = calc.normal_distribution_prob_density(el, m21, d21)
         data.append((el, res))
@@ -90,7 +95,6 @@ def prob_density_core(n, d11, d21, m11, m21, p1, k, c, q, core_type):
 
     plt.xlabel('X')
     plt.ylabel('f(x|1)')
-    plt.legend(['selected core', 'normal dist'], loc='upper left')
     plt.show()
 
 #
